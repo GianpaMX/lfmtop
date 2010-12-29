@@ -18,8 +18,52 @@
       <layoutsDirectory enabled="false"/>
       <modelsDirectory>
         <modelFile modelName="Lastfm"/>
+        <modelFile modelName="LastfmResponse"/>
+        <dbTableDirectory>
+          <dbTableFile dbTableName="Session"/>
+        </dbTableDirectory>
+        <modelFile modelName="SessionMapper"/>
+        <modelFile modelName="Session"/>
       </modelsDirectory>
-      <modulesDirectory enabled="false"/>
+      <modulesDirectory>
+        <moduleDirectory moduleName="lastfm">
+          <apisDirectory enabled="false"/>
+          <configsDirectory enabled="false"/>
+          <controllersDirectory/>
+          <formsDirectory enabled="false"/>
+          <layoutsDirectory enabled="false"/>
+          <modelsDirectory>
+            <dbTableDirectory enabled="false"/>
+            <modelFile modelName="Client"/>
+          </modelsDirectory>
+          <viewsDirectory>
+            <viewScriptsDirectory/>
+            <viewHelpersDirectory/>
+            <viewFiltersDirectory/>
+          </viewsDirectory>
+        </moduleDirectory>
+        <moduleDirectory moduleName="Lastfm">
+          <apisDirectory enabled="false"/>
+          <configsDirectory enabled="false"/>
+          <controllersDirectory/>
+          <formsDirectory enabled="false"/>
+          <layoutsDirectory enabled="false"/>
+          <modelsDirectory>
+            <dbTableDirectory>
+              <dbTableFile dbTableName="Session"/>
+            </dbTableDirectory>
+            <modelFile modelName="Client"/>
+            <modelFile modelName="Response"/>
+            <modelFile modelName="Session"/>
+            <modelFile modelName="SessionMapper"/>
+          </modelsDirectory>
+          <viewsDirectory>
+            <viewScriptsDirectory/>
+            <viewHelpersDirectory/>
+            <viewFiltersDirectory/>
+          </viewsDirectory>
+        </moduleDirectory>
+      </modulesDirectory>
       <viewsDirectory>
         <viewScriptsDirectory>
           <viewControllerScriptsDirectory forControllerName="Index">

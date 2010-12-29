@@ -1,6 +1,6 @@
 <?php
 
-class Application_Model_Lastfm {
+class Lastfm_Client {
 	private $key;
 	private $secret;
 	
@@ -12,14 +12,24 @@ class Application_Model_Lastfm {
 		$this->key = $key;
 		$this->secret = $secret;
 	}
-	 
+	
+	/**
+	 * 
+	 * @param string $name
+	 * @return Lastfm_Client
+	 */
 	public function __get($name) {
-		$class = get_class($this);
-		$lastfm = new $class($this->key, $this->secret);
+		$lastfm = new Lastfm_Client($this->key, $this->secret);
 		$lastfm->method = $name;
 		return $lastfm;
 	}
 	
+	/**
+	 * 
+	 * @param string $name
+	 * @param array $arguments
+	 * @return Lastfm_Response
+	 */
 	public function __call($name, $arguments) {
 		$this->method .= ($this->method?'.':'') . $name;
 		
@@ -32,6 +42,11 @@ class Application_Model_Lastfm {
 		return $this->_curl(self::url . $this->_query($params));
 	}
 	
+	/**
+	 * 
+	 * @param array $params
+	 * @return string
+	 */
 	private function _sign($params) {
 		$hashstring = '';
 		ksort($params);
@@ -44,6 +59,11 @@ class Application_Model_Lastfm {
 		return utf8_encode(md5($hashstring));
 	}
 	
+	/**
+	 * 
+	 * @param array $params
+	 * @return string
+	 */
 	private function _query($params) {
 		$query = '';
 		ksort($params);
@@ -54,6 +74,11 @@ class Application_Model_Lastfm {
 		return $query;
 	}
 	
+	/**
+	 * 
+	 * @param string $url
+	 * @return Lastfm_Response
+	 */
 	private function _curl($url) {
 		$ch = curl_init($url);
 		$fp = tmpfile();
@@ -69,9 +94,7 @@ class Application_Model_Lastfm {
 		$response = fread($fp, 10240);
 		fclose($fp);
 		
-		return array(
-			'info' => $info,
-			'response' => $response,
-		);
+		return new Lastfm_Response(simplexml_load_string($response), $info);
 	}
 }
+

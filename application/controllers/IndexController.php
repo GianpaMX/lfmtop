@@ -12,10 +12,15 @@ class IndexController extends Zend_Controller_Action {
 		$bootstrap = $this->getInvokeArg('bootstrap');
 		$this->config = $bootstrap->getOptions();
 		
-		$this->lfm = new Application_Model_Lastfm($this->config['lfmtop']['api']['key'], $this->config['lfmtop']['api']['secret']);
+		$this->lfm = new Lastfm_Client($this->config['lfmtop']['api']['key'], $this->config['lfmtop']['api']['secret']);
 	}
 
 	public function indexAction() {
+		$user = $this->getRequest()->getParam('user', null);
+		$session = Lfm_Model_SessionMapper::find($user);
+		echo "<pre>";
+		print_r($session);
+		die();
 	}
 
 	public function getsessionAction() {
@@ -23,21 +28,20 @@ class IndexController extends Zend_Controller_Action {
 		if( FALSE === $token ) {
 			die('No hay token');
 		}
-		$array = $this->lfm->auth->getSession(array('token' => $token));
-		 
-		$info = $array['info'];
-		$response = $array['response'];
+		$lfmResponse = $this->lfm->auth->getSession(array('token' => $token));
+		if($lfmResponse->status == 'ok') {
+			$session = new Lfm_Model_Session(array(
+				'user' => "{$lfmResponse->session()->name()}",
+				'key' => "{$lfmResponse->session()->key()}", 
+			));
+			
+			Lfm_Model_SessionMapper::save($session);
+			
+			$this->_redirector->gotoSimple('index', null, null, array('user' => $session->getUser()));
+		}
 		
-		$sxml = simplexml_load_string($array['response']);
-		
-		
-		die($sxml->getName());
-		
-		$this->_redirector->gotoSimple('index', null, null, array('token' => $token));
-		
-		$this->view->assign('info', $info);
-		$this->view->assign('response', $response);
-		
+		$error = $lfmResponse->error();
+		throw new Exception("Code: {$error->code}. Text: $error");
 	}
 }
 
