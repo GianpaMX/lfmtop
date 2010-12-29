@@ -3,8 +3,12 @@
 class IndexController extends Zend_Controller_Action {
 	private $config = null;
 	private $lfm;
+	
+	protected $_redirector = null;
 
 	public function init() {
+		$this->_redirector = $this->_helper->getHelper('Redirector');
+		
 		$bootstrap = $this->getInvokeArg('bootstrap');
 		$this->config = $bootstrap->getOptions();
 		
@@ -24,8 +28,16 @@ class IndexController extends Zend_Controller_Action {
 		$info = $array['info'];
 		$response = $array['response'];
 		
+		$sxml = simplexml_load_string($array['response']);
+		
+		
+		die($sxml->getName());
+		
+		$this->_redirector->gotoSimple('index', null, null, array('token' => $token));
+		
 		$this->view->assign('info', $info);
 		$this->view->assign('response', $response);
+		
 	}
 }
 
