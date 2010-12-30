@@ -7,6 +7,7 @@ class Lastfm_Client {
 	private $method = '';
 	
 	const url = 'http://ws.audioscrobbler.com/2.0/';
+	const urlAuth = 'http://www.last.fm/api/auth/';
 	
 	public function __construct($key = null, $secret = null) {
 		$this->key = $key;
@@ -94,7 +95,19 @@ class Lastfm_Client {
 		$response = fread($fp, 10240);
 		fclose($fp);
 		
-		return new Lastfm_Response(simplexml_load_string($response), $info);
+		$response = utf8_encode($response);
+		
+		$dom = new DOMDocument();
+		//echo "<pre>"; print_r(htmlentities($response));
+		$dom->loadHTML($response);
+		if(!$dom) {
+			throw new Exception('Error while parsing the response');
+		}
+		return new Lastfm_Response(simplexml_import_dom($dom), $info);
+	}
+	
+	public function getRequestAuthorizationUrl() {
+		return self::urlAuth . '?api_key=' . $this->key;
 	}
 }
 

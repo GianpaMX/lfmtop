@@ -18,8 +18,13 @@ class IndexController extends Zend_Controller_Action {
 	public function indexAction() {
 		$user = $this->getRequest()->getParam('user', null);
 		$session = Lfm_Model_SessionMapper::find($user);
+		if(is_null($session)) {
+			$this->_redirector->gotoUrl($this->lfm->getRequestAuthorizationUrl());
+		}
+
+		$lfmResponse = $this->lfm->user->getWeeklyTrackChart(array('user' => $session->getUser()));
 		echo "<pre>";
-		print_r($session);
+		print_r($lfmResponse);
 		die();
 	}
 
