@@ -40,7 +40,7 @@ class Lastfm_Client {
 		$params['api_sig'] = $this->_sign($params);
 		
 		
-		return $this->_curl(self::url . $this->_query($params));
+		return $this->_request(self::url . $this->_query($params));
 	}
 	
 	/**
@@ -80,7 +80,7 @@ class Lastfm_Client {
 	 * @param string $url
 	 * @return Lastfm_Response
 	 */
-	private function _curl($url) {
+	private function _request($url) {
 		$ch = curl_init($url);
 		$fp = tmpfile();
 
@@ -92,15 +92,13 @@ class Lastfm_Client {
 		curl_close($ch);
 
 		rewind($fp);
-		$response = fread($fp, 10240);
+		$response = fread($fp, $info['size_download']);
 		fclose($fp);
 		
 		$response = utf8_encode($response);
 		
 		$dom = new DOMDocument();
-		//echo "<pre>"; print_r(htmlentities($response));
-		$dom->loadHTML($response);
-		if(!$dom) {
+		if(!$dom->loadXML($response)) {
 			throw new Exception('Error while parsing the response');
 		}
 		return new Lastfm_Response(simplexml_import_dom($dom), $info);

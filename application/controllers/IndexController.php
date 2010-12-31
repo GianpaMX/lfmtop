@@ -22,7 +22,12 @@ class IndexController extends Zend_Controller_Action {
 			$this->_redirector->gotoUrl($this->lfm->getRequestAuthorizationUrl());
 		}
 
-		$lfmResponse = $this->lfm->user->getWeeklyTrackChart(array('user' => $session->getUser()));
+		$lfmResponse = $this->lfm->user->getWeeklyTrackChart(array(
+			'user' => $session->getUser(),
+			'from' => strtotime(),
+			'to' => strtotime(),
+			
+		));
 		echo "<pre>";
 		print_r($lfmResponse);
 		die();
